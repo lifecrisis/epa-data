@@ -32,23 +32,29 @@ pm_25_file() {
 }
 
 
-# Script main.
-main() {
+# Switch to the project root directory.
+cd "${BASH_SOURCE%/*}/.." || exit
 
-    # Download all required .ZIP files.
-    for year in {1990..2015}; do
-        wget --directory-prefix='ozone_raw_data/' \
-             "$OZONE_URI$(ozone_file $year)"
-        wget --directory-prefix='pm_25_raw_data/' \
-             "$PM_25_URI$(pm_25_file $year)"
-    done
+# Prepare "data/" directory for download of EPA data.
+if [ -d data/ ]; then
+    rm -rf data/*
+else
+    mkdir data/
+fi
+cd data/
 
-    # Unzip all .ZIP archives.
-    # TODO(jf): Sort out the problems using `unzip` with wildcards.
-    pushd ozone_raw_data/; unzip \*.zip; popd
-    pushd pm_25_raw_data/; unzip \*.zip; popd
+# Download all required .ZIP files.
+for year in {1990..2015}; do
+    wget --directory-prefix='ozone_raw_data/' \
+         "$OZONE_URI$(ozone_file $year)"
+    wget --directory-prefix='pm_25_raw_data/' \
+         "$PM_25_URI$(pm_25_file $year)"
+done
 
-    # Remove .ZIP archives, leaving only the required .CSV files.
-    rm ozone_raw_data/*.zip pm_25_raw_data/*.zip
-}
-main "@"
+# Unzip all .ZIP archives.
+# TODO(jf): Sort out the problems using `unzip` with wildcards.
+pushd ozone_raw_data/; unzip \*.zip; popd
+pushd pm_25_raw_data/; unzip \*.zip; popd
+
+# Remove .ZIP archives, leaving only the required .CSV files.
+rm ozone_raw_data/*.zip pm_25_raw_data/*.zip
