@@ -11,6 +11,7 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Data directory roots.
 DATA_ROOT = os.path.join(PROJECT_ROOT, 'data/')
+NO2_DATA_ROOT = os.path.join(DATA_ROOT, 'no2_raw_data/')
 OZONE_DATA_ROOT = os.path.join(DATA_ROOT, 'ozone_raw_data/')
 PM25_DATA_ROOT = os.path.join(DATA_ROOT, 'pm25_raw_data/')
 
@@ -29,6 +30,10 @@ def load_data_file(pollutant, year):
     elif pollutant == 'pm25' and year in range(1990, 2016):
         path_to_file = os.path.join(PM25_DATA_ROOT,
                                     "daily_88101_" + str(year) +".csv")
+        result = open(path_to_file, 'r')
+    elif pollutant == 'no2' and year in range(1990, 2016):
+        path_to_file = os.path.join(NO2_DATA_ROOT,
+                                    "daily_42602_" + str(year) +".csv")
         result = open(path_to_file, 'r')
     else:
         msg = "Data file with type '" + pollutant + "' and year '" +\

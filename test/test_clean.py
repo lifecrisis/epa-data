@@ -26,6 +26,30 @@ class LoadDataTestCase(unittest.TestCase):
     method.
     """
 
+    def test_load_no2_files(self):
+        """ Test that no2 data files can be loaded. """
+
+        # Test accuracy of NO2_DATA_ROOT.
+        no2_pathnames = glob.glob(clean.NO2_DATA_ROOT + '/daily_*.csv')
+        self.assertEqual(len(no2_pathnames), 26)
+        for pathname in no2_pathnames:
+            self.assertTrue(os.path.exists(pathname))
+
+        # Test that files can, in fact, be loaded into memory.
+        no2_pathnames = random.sample(no2_pathnames, 5)
+        for pathname in no2_pathnames:
+            year = int(pathname[-8:-4])
+            no2_file = clean.load_data_file('no2', year)
+            self.assertIsInstance(no2_file, file)
+            self.assertGreater(len(list(no2_file)), 0)
+            no2_file.close()
+
+        # Test that an incorrectly specified file raises an Error.
+        self.assertRaises(IOError, clean.load_data_file, 'xxxxx', 2020)
+        self.assertRaises(IOError, clean.load_data_file, 'xxxxx', 1995)
+        self.assertRaises(IOError, clean.load_data_file, 'no2', 1980)
+        self.assertRaises(IOError, clean.load_data_file, 'no2', 2020)
+
     def test_load_ozone_files(self):
         """ Test that ozone data files can be loaded. """
 
