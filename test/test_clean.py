@@ -50,4 +50,26 @@ class LoadDataTestCase(unittest.TestCase):
         self.assertRaises(IOError, clean.load_data_file, 'ozone', 1980)
         self.assertRaises(IOError, clean.load_data_file, 'ozone', 2020)
 
-    # TODO(jf): Write test for loading PM2.5 data.
+    def test_load_pm25_files(self):
+        """ Test that pm25 data files can be loaded. """
+
+        # Test accuracy of PM25_DATA_ROOT.
+        pm25_pathnames = glob.glob(clean.PM25_DATA_ROOT + '/daily_*.csv')
+        self.assertEqual(len(pm25_pathnames), 26)
+        for pathname in pm25_pathnames:
+            self.assertTrue(os.path.exists(pathname))
+
+        # Test that files can, in fact, be loaded into memory.
+        pm25_pathnames = random.sample(pm25_pathnames, 5)
+        for pathname in pm25_pathnames:
+            year = int(pathname[-8:-4])
+            pm25_file = clean.load_data_file('pm25', year)
+            self.assertIsInstance(pm25_file, file)
+            self.assertGreater(len(list(pm25_file)), 0)
+            pm25_file.close()
+
+        # Test that an incorrectly specified file raises an Error.
+        self.assertRaises(IOError, clean.load_data_file, 'xxxxx', 2020)
+        self.assertRaises(IOError, clean.load_data_file, 'xxxxx', 1995)
+        self.assertRaises(IOError, clean.load_data_file, 'pm25', 1980)
+        self.assertRaises(IOError, clean.load_data_file, 'pm25', 2020)
