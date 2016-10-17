@@ -46,7 +46,7 @@ def load_data_file(pollutant, year):
     return result
 
 
-def read_data_file(pollutant, year):
+def read_raw_data_file(pollutant, year):
     """
     Read records from a EPA data CSV file into a list of dictionaries.
 
@@ -74,7 +74,6 @@ def read_data_file(pollutant, year):
     next(csv_reader)
 
     record_list = list(csv_reader)
-    print record_list[10]
     record_list = map(to_dictionary, record_list)
 
     data_file.close()
