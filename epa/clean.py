@@ -3,6 +3,7 @@ Clean and amalgamate EPA data for analysis.
 """
 
 
+import csv
 import os.path
 
 
@@ -14,6 +15,37 @@ DATA_ROOT = os.path.join(PROJECT_ROOT, 'data/')
 NO2_DATA_ROOT = os.path.join(DATA_ROOT, 'no2_raw_data/')
 OZONE_DATA_ROOT = os.path.join(DATA_ROOT, 'ozone_raw_data/')
 PM25_DATA_ROOT = os.path.join(DATA_ROOT, 'pm25_raw_data/')
+
+# Headers expected in every CSV file.
+HEADERS_IN = ['State Code',
+              'County Code',
+              'Site Num',
+              'Parameter Code',
+              'POC',
+              'Latitude',
+              'Longitude',
+              'Datum',
+              'Parameter Name',
+              'Sample Duration',
+              'Pollutant Standard',
+              'Date Local',
+              'Units of Measure',
+              'Event Type',
+              'Observation Count',
+              'Observation Percent',
+              'Arithmetic Mean',
+              '1st Max Value',
+              '1st Max Hour',
+              'AQI',
+              'Method Code',
+              'Method Name',
+              'Local Site Name',
+              'Address',
+              'State Name',
+              'County Name',
+              'City Name',
+              'CBSA Name',
+              'Date of Last Change']
 
 
 def load_data_file(pollutant, year):
@@ -42,3 +74,15 @@ def load_data_file(pollutant, year):
 
     # Return a handle to the selected file.
     return result
+
+
+def epa_data_reader(pollutant, year):
+    """
+    Return a csv file reader object for reading from our raw data files.
+
+    Raises IOError if bad specs are passed due to calling load_data_file().
+    """
+
+    # Might raise IOError.
+    f = load_data_file(pollutant, year)
+    return csv.reader(f)
