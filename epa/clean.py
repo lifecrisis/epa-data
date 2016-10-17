@@ -4,6 +4,7 @@ Clean and amalgamate EPA data for analysis.
 
 
 import csv
+import itertools
 import os.path
 
 
@@ -15,37 +16,6 @@ DATA_ROOT = os.path.join(PROJECT_ROOT, 'data/')
 NO2_DATA_ROOT = os.path.join(DATA_ROOT, 'no2_raw_data/')
 OZONE_DATA_ROOT = os.path.join(DATA_ROOT, 'ozone_raw_data/')
 PM25_DATA_ROOT = os.path.join(DATA_ROOT, 'pm25_raw_data/')
-
-# Headers expected in every CSV file.
-HEADERS_IN = ['State Code',
-              'County Code',
-              'Site Num',
-              'Parameter Code',
-              'POC',
-              'Latitude',
-              'Longitude',
-              'Datum',
-              'Parameter Name',
-              'Sample Duration',
-              'Pollutant Standard',
-              'Date Local',
-              'Units of Measure',
-              'Event Type',
-              'Observation Count',
-              'Observation Percent',
-              'Arithmetic Mean',
-              '1st Max Value',
-              '1st Max Hour',
-              'AQI',
-              'Method Code',
-              'Method Name',
-              'Local Site Name',
-              'Address',
-              'State Name',
-              'County Name',
-              'City Name',
-              'CBSA Name',
-              'Date of Last Change']
 
 
 def load_data_file(pollutant, year):
@@ -76,13 +46,41 @@ def load_data_file(pollutant, year):
     return result
 
 
-def epa_data_reader(pollutant, year):
+def read_data_file(pollutant, year):
     """
-    Return a csv file reader object for reading from our raw data files.
+    Read records from a EPA data CSV file into a list of dictionaries.
 
-    Raises IOError if bad specs are passed due to calling load_data_file().
+    This method also performs necessary type conversions for eeach field.
+    Also, raises IOError if bad specs are passed due to calling
+    load_data_file().
     """
+    headers = ['longitude',
+               'latitude',
+               'date',
+               'mean',
+               'max']
 
-    # Might raise IOError.
-    f = load_data_file(pollutant, year)
-    return csv.reader(f)
+    def to_dictionary(record):
+        record = dict(zip(headers,
+                          [record[6],
+                           record[5],
+                           record[11],
+                           record[16],
+                           record[17]]))
+        return record
+
+    data_file = load_data_file(pollutant, year)
+    csv_reader = csv.reader(data_file)
+    next(csv_reader)
+
+    record_list = list(csv_reader)
+    print record_list[10]
+    record_list = map(to_dictionary, record_list)
+
+    data_file.close()
+    return record_list
+
+# TODO: Convert date to datetime object and distance from Jan. 1990 in months.
+# TODO: Convert mean and max to floats for amalgamation process.
+# TODO: Use itertools.groupby to perform the aggregation process.
+# TODO: Consider placing these actions in another method.

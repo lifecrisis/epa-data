@@ -5,10 +5,6 @@ This module provides unit tests that ensure that the routines for cleaning
 our EPA data work as expected.
 """
 
-# TODO(jf): Test reading, then manipulating, then writing for each file set.
-# TODO(jf): Test your code on the first/last lines of first/last files in both
-#           sets.
-
 
 import glob
 import os.path
@@ -97,36 +93,3 @@ class LoadDataTestCase(unittest.TestCase):
         self.assertRaises(IOError, clean.load_data_file, 'xxxxx', 1995)
         self.assertRaises(IOError, clean.load_data_file, 'pm25', 1980)
         self.assertRaises(IOError, clean.load_data_file, 'pm25', 2020)
-
-
-class ReadDataTestCase(unittest.TestCase):
-    """
-    Test that epa.clean.parse_raw_data parses our CSV records accurately.
-    """
-
-    def setUp(self):
-        """
-        Initialize a list of every (pollutant_type, year) pair under analysis.
-        """
-        # Specify all pairs of pollutant type and time.
-        import itertools
-        self.pollutant_year_pairs = itertools.product(['no2', 'ozone', 'pm25'],
-                                                      range(1990, 2016))
-
-    def test_headers_match(self):
-        """
-        Test that the headers read from every file match clean.HEADERS_IN.
-        """
-
-        # Verify that all files come with the proper headers.
-        for pair in self.pollutant_year_pairs:
-            header_fields = next(clean.epa_data_reader(*pair))
-            for i, field in enumerate(header_fields):
-                self.assertEqual(len(header_fields),
-                                 29,
-                                 msg="Number of header fields doesn't match " +
-                                     " for \"" + str(pair) + "\".")
-                self.assertEqual(field,
-                                 clean.HEADERS_IN[i],
-                                 msg="Header match failed for \"" +
-                                     str(pair) + "\".")
