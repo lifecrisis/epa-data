@@ -7,6 +7,8 @@ import csv
 import itertools
 import os.path
 
+from datetime import date
+
 
 # Project directory root.
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -56,17 +58,25 @@ def read_raw_data_file(pollutant, year):
     """
     headers = ['longitude',
                'latitude',
-               'date',
+               'month',
+	       'day',
                'mean',
                'max']
 
+    # TODO: This data doesn't handle missing values, denoted by ' - '.  If you
+    # start getting Errors, try to remove these values.
     def to_dictionary(record):
+	# Convert to numerical month value first.
+	date_obj = date(*[int(val) for val in record[11].split('-')])
+	month = 12 * (date_obj.year - 1990) + date_obj.month
+	# Generate dictionary of our record.
         record = dict(zip(headers,
                           [record[6],
                            record[5],
-                           record[11],
-                           record[16],
-                           record[17]]))
+                           month,
+			   date_obj.day,
+                           float(record[16]),
+                           float(record[17])]))
         return record
 
     data_file = load_data_file(pollutant, year)
@@ -79,7 +89,4 @@ def read_raw_data_file(pollutant, year):
     data_file.close()
     return record_list
 
-# TODO: Convert date to datetime object and distance from Jan. 1990 in months.
-# TODO: Convert mean and max to floats for amalgamation process.
-# TODO: Use itertools.groupby to perform the aggregation process.
-# TODO: Consider placing these actions in another method.
+# TODO: Use itertools.groupby to perform the aggregation process. Sort first!
