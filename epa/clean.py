@@ -59,22 +59,21 @@ def read_raw_data_file(pollutant, year):
     headers = ['longitude',
                'latitude',
                'month',
-	       'day',
+               'day',
                'mean',
                'max']
 
-    # TODO: This data doesn't handle missing values, denoted by ' - '.  If you
-    # start getting Errors, try to remove these values.
+    # NOTE:  Use an excpetion here if errors arrise in parsing missing values.
     def to_dictionary(record):
-	# Convert to numerical month value first.
-	date_obj = date(*[int(val) for val in record[11].split('-')])
-	month = 12 * (date_obj.year - 1990) + date_obj.month
-	# Generate dictionary of our record.
+        # Convert to numerical month value first.
+        date_obj = date(*[int(val) for val in record[11].split('-')])
+        month = 12 * (date_obj.year - 1990) + date_obj.month
+        # Generate dictionary of our record.
         record = dict(zip(headers,
                           [record[6],
                            record[5],
                            month,
-			   date_obj.day,
+                           date_obj.day,
                            float(record[16]),
                            float(record[17])]))
         return record
@@ -89,4 +88,25 @@ def read_raw_data_file(pollutant, year):
     data_file.close()
     return record_list
 
-# TODO: Use itertools.groupby to perform the aggregation process. Sort first!
+
+def agg_day_duplicates(record_dict):
+    """
+    Aggregate duplicate records for days in our time window by averaging
+    their pollution values.  This works for all pollutant types.
+    """
+    pass
+
+# At this state in the program, you have a list of dictionaries for a given
+# file. You now need to do the following:
+#   (1) Aggregate duplicate records for the same day by averaging their
+#       values. (Order given by Dr. Zhou)
+#       -> make sure sort works for a given set
+#   (2) Remove the day value altogether.  Only the month matters now.
+#   (3) Aggregate based on month and lat/longitude, taking average of averages
+#       and max of max values.
+#   (4) Append the results sorted by month (ascending) to a file that stores
+#       all output for the specific pollution type.
+#   (5) Make sure this process is repeated for all types and files.
+
+# TODO: Use itertools.groupby to perform the aggregation processes.
+#       Remember to sort first!
