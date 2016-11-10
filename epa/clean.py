@@ -19,7 +19,7 @@ OZONE_DATA_ROOT = os.path.join(DATA_ROOT, 'ozone_raw_data/')
 PM25_DATA_ROOT = os.path.join(DATA_ROOT, 'pm25_raw_data/')
 
 
-def load_data_file(pollutant, year):
+def _load_data_file(pollutant, year):
     """
     Return a data file handle for the given pollutant ('ozone' or 'pm25')
     and year.
@@ -47,13 +47,13 @@ def load_data_file(pollutant, year):
     return result
 
 
-def read_raw_data_file(pollutant, year):
+def read_data_file(pollutant, year):
     """
     Read records from a EPA data CSV file into a list of dictionaries.
 
     This method also performs necessary type conversions for eeach field.
     Also, raises IOError if bad specs are passed due to calling
-    load_data_file().
+    _load_data_file().
     """
     headers = ['longitude',
                'latitude',
@@ -78,7 +78,7 @@ def read_raw_data_file(pollutant, year):
                            float(record[17])]))
         return record
 
-    data_file = load_data_file(pollutant, year)
+    data_file = _load_data_file(pollutant, year)
     csv_reader = csv.reader(data_file)
     next(csv_reader)
 
@@ -107,4 +107,6 @@ def agg_day_duplicates():
     Aggregate duplicate records for days in our time window by averaging
     their pollution values.  This works for all pollutant types.
     """
+    # First, use key-func that sorts by (longitude, latitude, month, day)
+    # to get all dictionaries in proper order.
     pass

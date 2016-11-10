@@ -11,14 +11,14 @@ import os.path
 import random
 import unittest
 
-from epa import clean
+import epa.clean
 
 
 class LoadDataTestCase(unittest.TestCase):
     """
     Test that all data files can be successfully loaded.
 
-    Specifically, test "DATA_ROOT" constants and "load_data_file(type, year)"
+    Specifically, test "DATA_ROOT" constants and "_load_data_file(type, year)"
     method.
     """
 
@@ -26,7 +26,7 @@ class LoadDataTestCase(unittest.TestCase):
         """ Test that no2 data files can be loaded. """
 
         # Test accuracy of NO2_DATA_ROOT.
-        no2_pathnames = glob.glob(clean.NO2_DATA_ROOT + '/daily_*.csv')
+        no2_pathnames = glob.glob(epa.clean.NO2_DATA_ROOT + '/daily_*.csv')
         self.assertEqual(len(no2_pathnames), 26)
         for pathname in no2_pathnames:
             self.assertTrue(os.path.exists(pathname))
@@ -35,22 +35,22 @@ class LoadDataTestCase(unittest.TestCase):
         no2_pathnames = random.sample(no2_pathnames, 5)
         for pathname in no2_pathnames:
             year = int(pathname[-8:-4])
-            no2_file = clean.load_data_file('no2', year)
+            no2_file = epa.clean._load_data_file('no2', year)
             self.assertIsInstance(no2_file, file)
             self.assertGreater(len(list(no2_file)), 0)
             no2_file.close()
 
         # Test that an incorrectly specified file raises an Error.
-        self.assertRaises(IOError, clean.load_data_file, 'xxxxx', 2020)
-        self.assertRaises(IOError, clean.load_data_file, 'xxxxx', 1995)
-        self.assertRaises(IOError, clean.load_data_file, 'no2', 1980)
-        self.assertRaises(IOError, clean.load_data_file, 'no2', 2020)
+        self.assertRaises(IOError, epa.clean._load_data_file, 'xxxxx', 2020)
+        self.assertRaises(IOError, epa.clean._load_data_file, 'xxxxx', 1995)
+        self.assertRaises(IOError, epa.clean._load_data_file, 'no2', 1980)
+        self.assertRaises(IOError, epa.clean._load_data_file, 'no2', 2020)
 
     def test_load_ozone_files(self):
         """ Test that ozone data files can be loaded. """
 
         # Test accuracy of OZONE_DATA_ROOT.
-        ozone_pathnames = glob.glob(clean.OZONE_DATA_ROOT + '/daily_*.csv')
+        ozone_pathnames = glob.glob(epa.clean.OZONE_DATA_ROOT + '/daily_*.csv')
         self.assertEqual(len(ozone_pathnames), 26)
         for pathname in ozone_pathnames:
             self.assertTrue(os.path.exists(pathname))
@@ -59,22 +59,22 @@ class LoadDataTestCase(unittest.TestCase):
         ozone_pathnames = random.sample(ozone_pathnames, 5)
         for pathname in ozone_pathnames:
             year = int(pathname[-8:-4])
-            ozone_file = clean.load_data_file('ozone', year)
+            ozone_file = epa.clean._load_data_file('ozone', year)
             self.assertIsInstance(ozone_file, file)
             self.assertGreater(len(list(ozone_file)), 10000)
             ozone_file.close()
 
         # Test that an incorrectly specified file raises an Error.
-        self.assertRaises(IOError, clean.load_data_file, 'xxxxx', 2020)
-        self.assertRaises(IOError, clean.load_data_file, 'xxxxx', 1995)
-        self.assertRaises(IOError, clean.load_data_file, 'ozone', 1980)
-        self.assertRaises(IOError, clean.load_data_file, 'ozone', 2020)
+        self.assertRaises(IOError, epa.clean._load_data_file, 'xxxxx', 2020)
+        self.assertRaises(IOError, epa.clean._load_data_file, 'xxxxx', 1995)
+        self.assertRaises(IOError, epa.clean._load_data_file, 'ozone', 1980)
+        self.assertRaises(IOError, epa.clean._load_data_file, 'ozone', 2020)
 
     def test_load_pm25_files(self):
         """ Test that pm25 data files can be loaded. """
 
         # Test accuracy of PM25_DATA_ROOT.
-        pm25_pathnames = glob.glob(clean.PM25_DATA_ROOT + '/daily_*.csv')
+        pm25_pathnames = glob.glob(epa.clean.PM25_DATA_ROOT + '/daily_*.csv')
         self.assertEqual(len(pm25_pathnames), 26)
         for pathname in pm25_pathnames:
             self.assertTrue(os.path.exists(pathname))
@@ -83,13 +83,13 @@ class LoadDataTestCase(unittest.TestCase):
         pm25_pathnames = random.sample(pm25_pathnames, 5)
         for pathname in pm25_pathnames:
             year = int(pathname[-8:-4])
-            pm25_file = clean.load_data_file('pm25', year)
+            pm25_file = epa.clean._load_data_file('pm25', year)
             self.assertIsInstance(pm25_file, file)
             self.assertGreater(len(list(pm25_file)), 0)
             pm25_file.close()
 
         # Test that an incorrectly specified file raises an Error.
-        self.assertRaises(IOError, clean.load_data_file, 'xxxxx', 2020)
-        self.assertRaises(IOError, clean.load_data_file, 'xxxxx', 1995)
-        self.assertRaises(IOError, clean.load_data_file, 'pm25', 1980)
-        self.assertRaises(IOError, clean.load_data_file, 'pm25', 2020)
+        self.assertRaises(IOError, epa.clean._load_data_file, 'xxxxx', 2020)
+        self.assertRaises(IOError, epa.clean._load_data_file, 'xxxxx', 1995)
+        self.assertRaises(IOError, epa.clean._load_data_file, 'pm25', 1980)
+        self.assertRaises(IOError, epa.clean._load_data_file, 'pm25', 2020)
