@@ -4,6 +4,7 @@ Clean and amalgamate EPA data for analysis.
 
 
 import csv
+import itertools
 import os.path
 
 from datetime import date
@@ -46,7 +47,6 @@ def _load_data_file(pollutant, year):
     # Return a handle to the selected file.
     return result
 
-
 def read_data_file(pollutant, year):
     """
     Read records from a EPA data CSV file into a list of dictionaries.
@@ -88,7 +88,6 @@ def read_data_file(pollutant, year):
     data_file.close()
     return record_list
 
-
 # At this state in the program, you have a list of dictionaries for a given
 # file. You now need to do the following:
 #   (1) Aggregate duplicate records for the same day by averaging their
@@ -101,7 +100,6 @@ def read_data_file(pollutant, year):
 #       all output for the specific pollution type.
 #   (5) Make sure this process is repeated for all types and files.
 
-
 def _agg_day_key_func(dict_rec):
     """
     Compute the sort key for given dictionary record.
@@ -112,9 +110,16 @@ def _agg_day_key_func(dict_rec):
             dict_rec['month'],
             dict_rec['day'])
 
+def _agg_day_iter(dict_record_list):
+    """ Return an interator over keys and groups in dict_record_list. """
+    # Note that itertools.groupby() recommended sorting first.
+    dict_record_list = sorted(dict_record_list, key=_agg_day_key_func)
+    return itertools.groupby(dict_record_list, _agg_day_key_func)
+
 def agg_day_duplicates():
     """
-    Aggregate duplicate records for days in our time window by averaging
-    their pollution values.  This works for all pollutant types.
+    Aggregate duplicate records for days in a given list of dictionary records
+    by averaging their means and taking the max of their maximums.  This works
+    for all pollutant types.
     """
     pass
