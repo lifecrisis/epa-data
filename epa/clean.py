@@ -102,11 +102,19 @@ def read_data_file(pollutant, year):
 #   (5) Make sure this process is repeated for all types and files.
 
 
+def _agg_day_key_func(dict_rec):
+    """
+    Compute the sort key for given dictionary record.
+    The key is of the form "(longitude, latitude, month, day)".
+    """
+    return (dict_rec['longitude'],
+            dict_rec['latitude'],
+            dict_rec['month'],
+            dict_rec['day'])
+
 def agg_day_duplicates():
     """
     Aggregate duplicate records for days in our time window by averaging
     their pollution values.  This works for all pollutant types.
     """
-    # First, use key-func that sorts by (longitude, latitude, month, day)
-    # to get all dictionaries in proper order.
     pass

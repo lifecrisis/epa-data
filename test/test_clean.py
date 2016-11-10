@@ -6,10 +6,11 @@ our EPA data work as expected.
 """
 
 
-import glob
 import os.path
 import random
 import unittest
+
+from glob import glob
 
 import epa.clean
 
@@ -26,7 +27,7 @@ class LoadDataTestCase(unittest.TestCase):
         """ Test that no2 data files can be loaded. """
 
         # Test accuracy of NO2_DATA_ROOT.
-        no2_pathnames = glob.glob(epa.clean.NO2_DATA_ROOT + '/daily_*.csv')
+        no2_pathnames = glob(epa.clean.NO2_DATA_ROOT + '/daily_*.csv')
         self.assertEqual(len(no2_pathnames), 26)
         for pathname in no2_pathnames:
             self.assertTrue(os.path.exists(pathname))
@@ -50,7 +51,7 @@ class LoadDataTestCase(unittest.TestCase):
         """ Test that ozone data files can be loaded. """
 
         # Test accuracy of OZONE_DATA_ROOT.
-        ozone_pathnames = glob.glob(epa.clean.OZONE_DATA_ROOT + '/daily_*.csv')
+        ozone_pathnames = glob(epa.clean.OZONE_DATA_ROOT + '/daily_*.csv')
         self.assertEqual(len(ozone_pathnames), 26)
         for pathname in ozone_pathnames:
             self.assertTrue(os.path.exists(pathname))
@@ -74,7 +75,7 @@ class LoadDataTestCase(unittest.TestCase):
         """ Test that pm25 data files can be loaded. """
 
         # Test accuracy of PM25_DATA_ROOT.
-        pm25_pathnames = glob.glob(epa.clean.PM25_DATA_ROOT + '/daily_*.csv')
+        pm25_pathnames = glob(epa.clean.PM25_DATA_ROOT + '/daily_*.csv')
         self.assertEqual(len(pm25_pathnames), 26)
         for pathname in pm25_pathnames:
             self.assertTrue(os.path.exists(pathname))
@@ -93,3 +94,26 @@ class LoadDataTestCase(unittest.TestCase):
         self.assertRaises(IOError, epa.clean._load_data_file, 'xxxxx', 1995)
         self.assertRaises(IOError, epa.clean._load_data_file, 'pm25', 1980)
         self.assertRaises(IOError, epa.clean._load_data_file, 'pm25', 2020)
+
+
+class AggregateDayDuplicatesTestCase(unittest.TestCase):
+    """ Test that epa.clean.agg_day_duplicates() performs correctly. """
+
+    def test_agg_day_key_func(self):
+        """ Test the key function used to group records. """
+        # Read random data file.
+        chosen_year = random.sample(range(1990, 2016), 1)
+        chosen_pollutant = random.sample(['no2', 'ozone', 'pm25'], 1)
+        while chosen_pollutant == 'pm25' and chosen_year < 1997:
+            chosen_year = random.sample(range(1990, 2016), 1)
+            chosen_pollutant = random.sample(['no2', 'ozone', 'pm25'], 1)
+        # Check for key_func accuracy.
+        records = epa.clean.read_data_file(chosen_pollutant[0],
+                                           chosen_year[0])
+        for dict_rec in records:
+            kf_result = epa.clean._agg_day_key_func(dict_rec)
+            # Test for structure "(longitude, latitude, month, day)".
+            self.assertEqual(dict_rec['longitude'], kf_result[0])
+            self.assertEqual(dict_rec['latitude'], kf_result[1])
+            self.assertEqual(dict_rec['month'], kf_result[2])
+            self.assertEqual(dict_rec['day'], kf_result[3])
