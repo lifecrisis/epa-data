@@ -144,6 +144,7 @@ class AggregateDayDuplicatesTestCase(unittest.TestCase):
         Establish a record list fixture and apply epa.clean.agg_day_duplicates
         to it.  Check that the result conforms to expectations.
         """
+
         # Establish a local fixture.  There are 7 elements here.  The average
         # for all day duplicates should be 7.5.  All maximums should be 10.0
         record_list_fixture = [{'day': 3,
@@ -191,23 +192,112 @@ class AggregateDayDuplicatesTestCase(unittest.TestCase):
 
         # Aggregate duplicates within the fixture.
         result = epa.clean.agg_day_duplicates(record_list_fixture)
+
         # Check agg_day_duplicates accuracy.
         self.assertEqual(len(result), 3)
+
         # Check result for first record.
         self.assertEqual(result[0]['latitude'], '15.0')
         self.assertEqual(result[0]['longitude'], '10.0')
         self.assertEqual(result[0]['mean'], 7.5)
         self.assertEqual(result[0]['max'], 10.0)
         self.assertNotIn('day', result[0].keys())
+
         # Check result for second record.
         self.assertEqual(result[1]['latitude'], '25.0')
         self.assertEqual(result[1]['longitude'], '20.0')
         self.assertEqual(result[1]['mean'], 7.5)
         self.assertEqual(result[1]['max'], 10.0)
         self.assertNotIn('day', result[1].keys())
+
         # Check result for third record.
         self.assertEqual(result[2]['latitude'], '35.0')
         self.assertEqual(result[2]['longitude'], '30.0')
         self.assertEqual(result[2]['mean'], 7.5)
         self.assertEqual(result[2]['max'], 10.0)
         self.assertNotIn('day', result[2].keys())
+
+    def test_agg_by_month(self):
+        """
+        Test that epa.clean.agg_by_month() can successfuly aggregate records
+        to a single pair of measurements (max, mean) per month.
+        """
+
+        # Establish a local fixture.
+        record_list_fixture = [{'latitude': '35.0',
+                                'longitude': '30.0',
+                                'max': 10.0,
+                                'mean': 5.0,
+                                'month': 3},
+                               {'latitude': '35.0',
+                                'longitude': '30.0',
+                                'max': 1.0,
+                                'mean': 7.5,
+                                'month': 3},
+                               {'latitude': '35.0',
+                                'longitude': '30.0',
+                                'max': 1.0,
+                                'mean': 10.0,
+                                'month': 3},
+                               {'latitude': '50.0',
+                                'longitude': '50.0',
+                                'max': 10.0,
+                                'mean': 5.0,
+                                'month': 2},
+                               {'latitude': '50.0',
+                                'longitude': '50.0',
+                                'max': 1.0,
+                                'mean': 10.0,
+                                'month': 2},
+                               {'latitude': '25.0',
+                                'longitude': '20.0',
+                                'max': 10.0,
+                                'mean': 5.0,
+                                'month': 2},
+                               {'latitude': '25.0',
+                                'longitude': '20.0',
+                                'max': 1.0,
+                                'mean': 10.0,
+                                'month': 2},
+                               {'latitude': '15.0',
+                                'longitude': '10.0',
+                                'max': 10.0,
+                                'mean': 5.0,
+                                'month': 1},
+                               {'latitude': '15.0',
+                                'longitude': '10.0',
+                                'max': 1.0,
+                                'mean': 10.0,
+                                'month': 1}]
+
+        # Run the aggregation and check the result.
+        result = epa.clean.agg_by_month(record_list_fixture)
+        self.assertEqual(len(result), 4)
+
+        # Check result for first record.
+        self.assertEqual(result[0]['latitude'], '15.0')
+        self.assertEqual(result[0]['longitude'], '10.0')
+        self.assertEqual(result[0]['mean'], 7.5)
+        self.assertEqual(result[0]['month'], 1)
+        self.assertEqual(result[0]['max'], 10.0)
+
+        # Check result for second record.
+        self.assertEqual(result[1]['latitude'], '25.0')
+        self.assertEqual(result[1]['longitude'], '20.0')
+        self.assertEqual(result[1]['month'], 2)
+        self.assertEqual(result[1]['mean'], 7.5)
+        self.assertEqual(result[1]['max'], 10.0)
+
+        # Check result for third record.
+        self.assertEqual(result[2]['latitude'], '35.0')
+        self.assertEqual(result[2]['longitude'], '30.0')
+        self.assertEqual(result[2]['month'], 3)
+        self.assertEqual(result[2]['mean'], 7.5)
+        self.assertEqual(result[2]['max'], 10.0)
+
+        # Check result for first record.
+        self.assertEqual(result[3]['latitude'], '50.0')
+        self.assertEqual(result[3]['longitude'], '50.0')
+        self.assertEqual(result[3]['month'], 2)
+        self.assertEqual(result[3]['mean'], 7.5)
+        self.assertEqual(result[3]['max'], 10.0)

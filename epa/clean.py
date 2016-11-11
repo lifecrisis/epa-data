@@ -127,7 +127,6 @@ def agg_day_duplicates(dict_record_list):
     iterator = _agg_day_iter(dict_record_list)
     groups = [list(group) for _, group in iterator]
 
-    # Define a reducer for aggregating records in each group.
     def reducer(rec1, rec2):
         """ Amalgamate two records from the same group. """
         maximum = rec1['max'] if rec1['max'] > rec2['max'] else rec2['max']
@@ -137,7 +136,45 @@ def agg_day_duplicates(dict_record_list):
                 'mean': rec1['mean'] + rec2['mean'],
                 'max': maximum}
 
-    # Reduce down to the meaningful result.
+    result = []
+    for group in groups:
+        reduction = reduce(reducer, group)
+        reduction['mean'] /= len(group)
+        result.append(reduction)
+    return result
+
+def agg_by_month(clean_dict_records):
+    """
+    Aggregate records by month, where the records have been cleaned by
+    the agg_day_duplicates() procedure.
+    """
+    # Note that this function was built quickly with but one simple functional
+    # test... more testing may be required if errors arise.
+
+    def key_func(clean_dict_record):
+        """
+        Return a key to be used in sorting the records for
+        aggregation.
+        """
+        return (clean_dict_record['longitude'],
+                clean_dict_record['latitude'],
+                clean_dict_record['month'])
+
+    # Sort the records and get an iterator over the (key, group) pairs,
+    # extracting the groups from the iterator.
+    clean_dict_records = sorted(clean_dict_records, key=key_func)
+    iterator = itertools.groupby(clean_dict_records, key_func)
+    groups = [list(group) for _, group in iterator]
+
+    def reducer(rec1, rec2):
+        """ Amalgamate two cleaned records according to Dr. Zhou's rule. """
+        maximum = rec1['max'] if rec1['max'] > rec2['max'] else rec2['max']
+        return {'longitude': rec1['longitude'],
+                'latitude': rec1['latitude'],
+                'month': rec1['month'],
+                'mean': rec1['mean'] + rec2['mean'],
+                'max': maximum}
+    # Extract the groups and process them to build the result.
     result = []
     for group in groups:
         reduction = reduce(reducer, group)
