@@ -67,6 +67,7 @@ def read_data_file(pollutant, year):
         """ Return a dictionary all critical data fields in a CSV record. """
         # Convert to numerical month value first.
         date_obj = date(*[int(val) for val in record[11].split('-')])
+        # NOTE: We start counting at 1!!!
         month = 12 * (date_obj.year - 1990) + date_obj.month
         # Generate dictionary of our record.
         record = dict(zip(headers,
@@ -87,18 +88,6 @@ def read_data_file(pollutant, year):
 
     data_file.close()
     return record_list
-
-# At this state in the program, you have a list of dictionaries for a given
-# file. You now need to do the following:
-#   (1) Aggregate duplicate records for the same day by averaging their
-#       values (Order given by Dr. Zhou).  Use "itertools.groupby()" for
-#       this procedure (make sure sort works for a given set).
-#   (2) Remove the day value altogether.  Only the month matters now.
-#   (3) Aggregate based on month and lat/longitude, taking average of averages
-#       and max of max values.
-#   (4) Append the results sorted by month (ascending) to a file that stores
-#       all output for the specific pollution type.
-#   (5) Make sure this process is repeated for all types and files.
 
 def _agg_day_key_func(dict_record):
     """
@@ -138,6 +127,8 @@ def agg_day_duplicates(dict_record_list):
 
     result = []
     for group in groups:
+        for elt in group:
+            del elt['day']
         reduction = reduce(reducer, group)
         reduction['mean'] /= len(group)
         result.append(reduction)
@@ -181,3 +172,25 @@ def agg_by_month(clean_dict_records):
         reduction['mean'] /= len(group)
         result.append(reduction)
     return result
+
+def write_clean_records(records, pollutant):
+    """
+    Given a list of processed records with the type and year, write them
+    to the appropriate output file.
+    """
+    path = os.path.join(DATA_ROOT,
+                        'clean/monthly_' + pollutant + '_1990-2015.csv')
+    with open(path, 'a') as outfile:
+        fieldnames = ['longitude', 'latitude', 'month', 'max', 'mean']
+        writer = csv.DictWriter(outfile, fieldnames)
+        writer.writeheader()
+        for row in records:
+            writer.writerow(row)
+
+def main():
+    """ Application main. """
+    records = read_data_file('ozone', 2000)
+    write_clean_records(agg_by_month(agg_day_duplicates(records)), 'ozone')
+
+if __name__ == "__main__":
+    main()

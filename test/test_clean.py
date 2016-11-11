@@ -280,6 +280,7 @@ class AggregateDayDuplicatesTestCase(unittest.TestCase):
         self.assertEqual(result[0]['mean'], 7.5)
         self.assertEqual(result[0]['month'], 1)
         self.assertEqual(result[0]['max'], 10.0)
+        self.assertNotIn('day', result[0].keys())
 
         # Check result for second record.
         self.assertEqual(result[1]['latitude'], '25.0')
@@ -287,6 +288,7 @@ class AggregateDayDuplicatesTestCase(unittest.TestCase):
         self.assertEqual(result[1]['month'], 2)
         self.assertEqual(result[1]['mean'], 7.5)
         self.assertEqual(result[1]['max'], 10.0)
+        self.assertNotIn('day', result[1].keys())
 
         # Check result for third record.
         self.assertEqual(result[2]['latitude'], '35.0')
@@ -294,6 +296,7 @@ class AggregateDayDuplicatesTestCase(unittest.TestCase):
         self.assertEqual(result[2]['month'], 3)
         self.assertEqual(result[2]['mean'], 7.5)
         self.assertEqual(result[2]['max'], 10.0)
+        self.assertNotIn('day', result[2].keys())
 
         # Check result for first record.
         self.assertEqual(result[3]['latitude'], '50.0')
@@ -301,3 +304,4 @@ class AggregateDayDuplicatesTestCase(unittest.TestCase):
         self.assertEqual(result[3]['month'], 2)
         self.assertEqual(result[3]['mean'], 7.5)
         self.assertEqual(result[3]['max'], 10.0)
+        self.assertNotIn('day', result[3].keys())
