@@ -183,14 +183,23 @@ def write_clean_records(records, pollutant):
     with open(path, 'a') as outfile:
         fieldnames = ['longitude', 'latitude', 'month', 'max', 'mean']
         writer = csv.DictWriter(outfile, fieldnames)
-        writer.writeheader()
+        # writer.writeheader()
         for row in records:
             writer.writerow(row)
 
 def main():
     """ Application main. """
-    records = read_data_file('ozone', 2000)
-    write_clean_records(agg_by_month(agg_day_duplicates(records)), 'ozone')
+
+    # Enumerate all (pollutant_type, year) pairs.
+    files_specs = itertools.product(['no2', 'ozone', 'pm25'],
+                                    range(1990, 2016))
+
+    # Clean and write data from each file.
+    for i, spec in enumerate(files_specs):
+        dirty = read_data_file(spec[0], spec[1])
+        clean = agg_by_month(agg_day_duplicates(dirty))
+        write_clean_records(clean, spec[0])
+        print 'Processed ' + str(i + 1) + '/78...'
 
 if __name__ == "__main__":
     main()
