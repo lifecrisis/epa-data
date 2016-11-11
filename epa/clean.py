@@ -100,15 +100,15 @@ def read_data_file(pollutant, year):
 #       all output for the specific pollution type.
 #   (5) Make sure this process is repeated for all types and files.
 
-def _agg_day_key_func(dict_rec):
+def _agg_day_key_func(dict_record):
     """
     Compute the sort key for given dictionary record.
     The key is of the form "(longitude, latitude, month, day)".
     """
-    return (dict_rec['longitude'],
-            dict_rec['latitude'],
-            dict_rec['month'],
-            dict_rec['day'])
+    return (dict_record['longitude'],
+            dict_record['latitude'],
+            dict_record['month'],
+            dict_record['day'])
 
 def _agg_day_iter(dict_record_list):
     """ Return an interator over keys and groups in dict_record_list. """
@@ -116,10 +116,31 @@ def _agg_day_iter(dict_record_list):
     dict_record_list = sorted(dict_record_list, key=_agg_day_key_func)
     return itertools.groupby(dict_record_list, _agg_day_key_func)
 
-def agg_day_duplicates():
+def agg_day_duplicates(dict_record_list):
     """
     Aggregate duplicate records for days in a given list of dictionary records
     by averaging their means and taking the max of their maximums.  This works
     for all pollutant types.
     """
-    pass
+
+    # Get an iterator over (key, group) pairs and extract the list of groups.
+    iterator = _agg_day_iter(dict_record_list)
+    groups = [list(group) for _, group in iterator]
+
+    # Define a reducer for aggregating records in each group.
+    def reducer(rec1, rec2):
+        """ Amalgamate two records from the same group. """
+        maximum = rec1['max'] if rec1['max'] > rec2['max'] else rec2['max']
+        return {'longitude': rec1['longitude'],
+                'latitude': rec1['latitude'],
+                'month': rec1['month'],
+                'mean': rec1['mean'] + rec2['mean'],
+                'max': maximum}
+
+    # Reduce down to the meaningful result.
+    result = []
+    for group in groups:
+        reduction = reduce(reducer, group)
+        reduction['mean'] /= len(group)
+        result.append(reduction)
+    return result
