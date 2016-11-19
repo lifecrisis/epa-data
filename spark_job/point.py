@@ -83,7 +83,7 @@ def load_pm25_rdd(csv_rdd):
         fieldnames = ['longitude',
                       'latitude',
                       'month',
-                      'max',
+                      'maximum',
                       'mean']
         reader = csv.DictReader(result, fieldnames)
         return reader.next()
@@ -106,7 +106,7 @@ def load_pm25_file(csv_file):
         fieldnames = ['longitude',
                       'latitude',
                       'month',
-                      'max',
+                      'maximum',
                       'mean']
         reader = csv.DictReader(result, fieldnames)
         return reader.next()
