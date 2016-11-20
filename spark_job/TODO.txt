@@ -3,10 +3,17 @@ EPA DATA TODO LIST:
 [X] copy files from experiment_04 into a local directory for re-use as a new
     spark job
 [X] remove unneeded data in HDFS
-[ ] inspect all scripts to have them use the new data sets
+[X] inspect all scripts to have them use the new data sets
     Specifically check:
         [X] point.py
         [X] partition.py
-        [ ] experiment_04.py
-[ ] configure the spark driver to learn based on specified parameters
-[ ] rename experiment_04 script to a more appropriate name
+        [X] experiment_04.py
+[X] configure the spark driver to learn based on specified parameters
+[X] rename experiment_04 script to a more appropriate name
+
+Note:
+-----
+Remember to change the following for learning mean vs. max:
+    * Point class definition
+    * names of output files in epa_data_job.py
+    * name of job in submit.sh
