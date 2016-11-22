@@ -1,0 +1,99 @@
+======================================================
+BEGIN PROGRAM
+
+Summary for 'ozone_mean_results.csv':
+
+Optimal MARE result:
+    Folds : 10
+    Neighbors : 3
+    Power : 4.5
+    Time Scale : 0.4
+    Alpha : 0.75
+    Bags : 3
+    MARE : 0.0184536755379
+    RMSPE : 8.86025275091
+
+Optimal RMSPE result:
+    Folds : 10
+    Neighbors : 3
+    Power : 4.5
+    Time Scale : 1.875
+    Alpha : 0.75
+    Bags : 3
+    MARE : 0.0191185595658
+    RMSPE : 7.41863681641
+
+------------------------------------------------------
+
+Summary for 'ozone_max_results.csv':
+
+Optimal MARE result:
+    Folds : 10
+    Neighbors : 3
+    Power : 4.5
+    Time Scale : 2.0
+    Alpha : 0.75
+    Bags : 3
+    MARE : 0.0149321651486
+    RMSPE : 9.7367545719
+
+Optimal RMSPE result:
+    Folds : 10
+    Neighbors : 3
+    Power : 4.5
+    Time Scale : 1.875
+    Alpha : 0.75
+    Bags : 3
+    MARE : 0.0153192076012
+    RMSPE : 9.44610400136
+
+------------------------------------------------------
+
+Summary for 'pm25_mean_results.csv':
+
+Optimal MARE result:
+    Folds : 10
+    Neighbors : 3
+    Power : 4.5
+    Time Scale : 0.016
+    Alpha : 0.75
+    Bags : 3
+    MARE : 0.0259391709585
+    RMSPE : 110.566179467
+
+Optimal RMSPE result:
+    Folds : 10
+    Neighbors : 3
+    Power : 4.5
+    Time Scale : 0.018
+    Alpha : 0.75
+    Bags : 3
+    MARE : 0.0410652502875
+    RMSPE : 37.8421648131
+
+------------------------------------------------------
+
+Summary for 'pm25_max_results.csv':
+
+Optimal MARE result:
+    Folds : 10
+    Neighbors : 3
+    Power : 4.5
+    Time Scale : 0.25
+    Alpha : 0.75
+    Bags : 3
+    MARE : 0.0345167712311
+    RMSPE : 8.35431477504
+
+Optimal RMSPE result:
+    Folds : 10
+    Neighbors : 3
+    Power : 4.5
+    Time Scale : 0.016
+    Alpha : 0.75
+    Bags : 3
+    MARE : 0.0370867702154
+    RMSPE : 6.5683086508
+
+END PROGRAM
+======================================================
