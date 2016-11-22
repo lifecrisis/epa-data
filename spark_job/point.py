@@ -96,7 +96,7 @@ class QueryPoint(object):
                               for a, b in zip(endpoint1, endpoint2)]))
 
     def interpolate(self, nodes, power):
-        """ Return an estimate of self.pm25 given nodes list. """
+        """ Set the estimated max and mean for this node. """
 
         # Note that objects in 'nodes' now have 'max' and 'mean' attribues.
         inv_distances = [(1.0 / self.distance(n.location)) ** power
@@ -108,11 +108,28 @@ class QueryPoint(object):
         self.max_est = sum([l * n.max for l, n in zip(lambdas, nodes)])
         self.mean_est = sum([l * n.mean for l, n in zip(lambdas, nodes)])
 
-        return result
+        # This hook can be used to average multiple estimates for this
+        # query point and then manually set the values when done.
+        return (self.max_est, self.mean_est)
 
     def location(self):
         """ Return a tuple representing the location of this PMPoint. """
         return (self.longitude, self.latitude, self.scaled_time)
+
+    def report(self):
+        """ Return a CSV record representing this QueryPoint's attributes. """
+
+        return self.blk_id +\
+               ',' +\
+               str(self.longitude) +\
+               ',' +\
+               str(self.latitude) +\
+               ',' +\
+               str(self.month) +\
+               ',' +\
+               str(self.max_est) +\
+               ',' +\
+               str(self.mean_est) + '\n'
 
     def scale_time(self, scale):
         """
@@ -122,14 +139,6 @@ class QueryPoint(object):
         self.scaled_time = self.month * scale
         self.time_scale = scale
         return self
-
-    def __str__(self):
-        """ Return the string representation of this object. """
-        return '< PMPoint -- ' +\
-               str(self.location()) +\
-               ', ' +\
-               str(self.value()) +\
-               '>'
 
 
 def load_point_rdd(csv_rdd):
