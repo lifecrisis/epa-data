@@ -1,0 +1,4 @@
+These are the results of the learning task for learning the optimal parameters
+for max and mean values of ozone and pm2.5.
+
+They have the schema: "folds,nbrs,power,time_scale,alpha,m,MARE,RMSPE"
