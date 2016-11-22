@@ -18,9 +18,9 @@ class Point(object):
         self.latitude = float(kwargs['latitude'])
         self.month = float(kwargs['month'])
 
-        # Swap these two when training for maximum.
-        # self.pm25 = float(kwargs['maximum'])
-        self.pm25 = float(kwargs['mean'])
+        # Swap these two when running training tasks.
+        # self.pm25 = float(kwargs['mean'])
+        self.pm25 = float(kwargs['maximum'])
 
         self.scaled_time = None
         self.time_scale = None

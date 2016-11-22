@@ -74,11 +74,10 @@ def main():
                  for m in M]
 
     # Distribute the RDD of k-fold configurations.
-    conf_rdd = SC.parallelize(conf_list, 100).cache()
+    conf_rdd = SC.parallelize(conf_list, 104).cache()
 
     # Group all the partitions that are to be examined.
-    partition_files = ['partitions/monthly_no2_1990-2015_partition.csv',
-                       'partitions/monthly_ozone_1990-2015_partition.csv',
+    partition_files = ['partitions/monthly_ozone_1990-2015_partition.csv',
                        'partitions/monthly_pm25_1990-2015_partition.csv']
 
     # Run learning tasks for each partition.
@@ -101,11 +100,11 @@ def main():
         # Write the output to a file in a "results/" directory, regardless of
         # the order in which the partitions were analysed.
         if 'no2' in file_name:
-            report_rdd.saveAsTextFile('results/no2_mean_results')
+            report_rdd.saveAsTextFile('results/no2_max_results')
         elif 'ozone' in file_name:
-            report_rdd.saveAsTextFile('results/ozone_mean_results')
+            report_rdd.saveAsTextFile('results/ozone_max_results')
         elif 'pm25' in file_name:
-            report_rdd.saveAsTextFile('results/pm25_mean_results')
+            report_rdd.saveAsTextFile('results/pm25_max_results')
         else:
             import sys
             sys.exit(1)
