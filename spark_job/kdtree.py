@@ -74,6 +74,8 @@ class KDNode:
     def __init__(self, point):
         self.location = point.location()
         self.value = point.value()
+        self.max = getattr(point, 'max', None)
+        self.mean = getattr(point, 'mean', None)
         self.left = None
         self.right = None
 
