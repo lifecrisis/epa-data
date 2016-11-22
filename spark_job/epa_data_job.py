@@ -84,7 +84,7 @@ def main():
     for file_name in partition_files:
 
         # Note that we reuse the method from "point.py" here.
-        point_list = point.load_pm25_file(file_name)
+        point_list = point.load_point_file(file_name)
         point_list_brd = SC.broadcast(point_list)
 
         # Define a mapper to run your statistical routines.

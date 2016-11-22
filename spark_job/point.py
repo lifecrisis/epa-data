@@ -69,7 +69,7 @@ class Point(object):
                '>'
 
 
-def load_pm25_rdd(csv_rdd):
+def load_point_rdd(csv_rdd):
     """
     Return an RDD of Point objects.
 
@@ -91,7 +91,7 @@ def load_pm25_rdd(csv_rdd):
     return csv_rdd.map(load_record).map(lambda rec: Point(**rec))
 
 
-def load_pm25_file(csv_file):
+def load_point_file(csv_file):
     """
     Return a list of Point objects loaded directly from a CSV file.
 
