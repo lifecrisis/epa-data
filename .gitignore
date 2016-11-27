@@ -2,3 +2,5 @@
 data/
 .DS_store
 *.pyc
+spark_job/ozone_inter_output/
+spark_job/pm25_inter_output/
